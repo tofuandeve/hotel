@@ -3,7 +3,7 @@
 ## At A Glance
 
 - Individual, [stage 3](https://github.com/Ada-Developers-Academy/pedagogy/blob/master/rule-of-three.md) project
-- Due before class, *DATE HERE*
+- Due before class, Monday September 9th
 
 ## Introduction
 
