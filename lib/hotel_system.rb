@@ -1,3 +1,5 @@
-class HotelSystem
-    
+module Hotel
+    class HotelSystem
+        
+    end
 end
