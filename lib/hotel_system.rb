@@ -22,15 +22,19 @@ module Hotel
             return reservations.map { |reservation| reservation.id }
         end
         
+        def create_unique_id
+            reservation_id = rand(1000..9999)
+            while reservation_ids.include? reservation_id
+                reservation_id = rand(1000..9999)
+            end
+            return reservation_id
+        end
+        
         def make_reservation(start_date, end_date)
             room_reservations_pair = @rooms.find { |number, reservations| reservations.empty? }
             if room_reservations_pair
                 date_range = DateRange.new(start_date, end_date)
-                
-                reservation_id = rand(1000..9999)
-                while reservation_ids.include? reservation_id
-                    reservation_id = rand(1000..9999)
-                end
+                reservation_id = create_unique_id
                 @rooms[room_reservations_pair[0]] << Reservation.new(date_range, RATE, reservation_id)
             end
         end
