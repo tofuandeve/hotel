@@ -61,6 +61,7 @@ describe Hotel::HotelSystem do
             @end_date1 = '2019-09-13'
             @number_of_reservations = 0
         end
+
         it "can update the list of reservations for valid date range" do
             @expected_number_of_rooms.times do 
                 @hotel_system.make_reservation(@start_date1, @end_date1)
@@ -83,7 +84,7 @@ describe Hotel::HotelSystem do
             end
         end
         
-        it "does nothing if no rooms are available" do
+        it "raises ArgumentError if no rooms are available" do
             @expected_number_of_rooms.times do 
                 @hotel_system.make_reservation(@start_date1, @end_date1)
             end
@@ -94,8 +95,7 @@ describe Hotel::HotelSystem do
             
             start_date2 = '2019-09-12'
             end_date2 = '2019-09-15'
-            @hotel_system.make_reservation(start_date2, end_date2)
-            expect (@hotel_system.reservations.length).must_equal @number_of_reservations
+            expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise ArgumentError
         end
         
         it "raises ArgumentError for invalid start and end dates" do

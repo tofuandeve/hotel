@@ -7,36 +7,31 @@ module Hotel
         
         def initialize(input_number_of_rooms = NUMBER_OF_ROOM)
             @rooms = Hash.new   
-            @number_of_rooms = input_number_of_rooms
             number_of_rooms.times do |index|
                 @rooms[(index + 1)] = Array.new
             end
+            @room_numbers = @rooms.keys
             
+        end
+
+        def number_of_rooms
+            return NUMBER_OF_ROOM
         end
         
         def reservations
             return @rooms.values.flatten
         end
         
-        def reservation_ids
-            return reservations.map { |reservation| reservation.id }
-        end
-        
-        def create_unique_id
-            reservation_id = rand(1000..9999)
-            while reservation_ids.include? reservation_id
-                reservation_id = rand(1000..9999)
-            end
-            return reservation_id
-        end
-        
         def make_reservation(start_date, end_date)
             date_range = DateRange.new(start_date, end_date)
             available_rooms = find_available_rooms(date_range)
-            if !available_rooms.empty?
-                reservation_id = create_unique_id
-                @rooms[available_rooms.first] << Reservation.new(date_range, RATE, reservation_id)
+
+            if available_rooms.empty?
+                raise ArgumentError.new("No rooms available in this date range!")
             end
+
+            reservation_id = create_unique_id
+            @rooms[available_rooms.first] << Reservation.new(date_range, RATE, reservation_id)
         end
         
         def find_reservation_by_date(date)
@@ -54,19 +49,33 @@ module Hotel
             end
             return output_reservation.cost
         end
-
-        def find_available_rooms(date_range)
+        
+        def find_available_rooms(room_numbers = @room_numbers, date_range)
             available_rooms = Array.new
-            @rooms.each do |number, reservation_list|
-                if !has_overlapping(reservation_list, date_range)
+            room_numbers.each do |number|
+                if !has_overlapping(@rooms[number], date_range)
                     available_rooms << number
                 end
             end
             return available_rooms
         end
+        
 
+        private
         def has_overlapping(list, date_range)
             return list.any? {|reservation| reservation.date_range.overlap?(date_range) }
+        end
+       
+        def reservation_ids
+            return reservations.map { |reservation| reservation.id }
+        end
+
+        def create_unique_id
+            reservation_id = rand(1000..9999)
+            while reservation_ids.include? reservation_id
+                reservation_id = rand(1000..9999)
+            end
+            return reservation_id
         end
     end
 end
