@@ -1,6 +1,10 @@
 require_relative 'test_helper'
 
 describe Hotel::HotelSystem do
+    before do
+        @expected_number_of_rooms = 20
+    end
+
     describe "Constructor" do
         it "can instantiate a HotelSystem object" do
             hotel_system = Hotel::HotelSystem.new()
@@ -8,9 +12,8 @@ describe Hotel::HotelSystem do
         end
         
         it "can instantiate a HotelSystem that tracks 20 rooms" do
-            expected_number_of_rooms = 20
             hotel_system = Hotel::HotelSystem.new()
-            expect (hotel_system.number_of_rooms).must_equal expected_number_of_rooms
+            expect (hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
         end
         
         it "allows user to access a list of Reservation" do
@@ -19,48 +22,88 @@ describe Hotel::HotelSystem do
         end
     end
     
-    describe "make reservation method" do
-        it "can update the list of reservations for valid date range" do
-            hotel_system = Hotel::HotelSystem.new()
-            start_date = '2019-09-10'
-            end_date = '2019-09-13'
-            number_of_reservations = hotel_system.reservations.length
-            expected_number_of_rooms = hotel_system.number_of_rooms
+    describe "find_available_rooms method" do
+        before do
+            @hotel_system = Hotel::HotelSystem.new()
+            @rooms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+            @start_date1 = '2019-09-09'
+            @end_date1 = '2019-09-15'
+            @date1 = Hotel::DateRange.new(@start_date1, @end_date1)       
+        end
+        
+        it "returns an array of available rooms" do
+            available_rooms = @hotel_system.find_available_rooms(@date1)
+            expect (available_rooms).must_be_instance_of Array
+            expect (available_rooms).must_equal @rooms
             
-            hotel_system.make_reservation(start_date, end_date)
-            expect (
-                hotel_system.reservations.length
-            ).must_equal (number_of_reservations + 1)
-            expect (hotel_system.number_of_rooms).must_equal expected_number_of_rooms
+            @hotel_system.make_reservation(@start_date1, @end_date1)
+            expect (@hotel_system.find_available_rooms(@date1)).wont_equal @rooms     
+        end
+        
+        it "returns an empty array if there is no rooms available" do
+            @rooms.length.times do 
+                @hotel_system.make_reservation(@start_date1, @end_date1)
+            end
+            
+            start_date2 = '2019-09-10'
+            end_date2 = '2019-09-13'
+            date2 = Hotel::DateRange.new(start_date2, end_date2)  
+            
+            available_rooms = @hotel_system.find_available_rooms(date2) 
+            expect (available_rooms).must_be_empty
+        end
+    end
+    
+    describe "make reservation method" do
+        before do
+            @hotel_system = Hotel::HotelSystem.new()
+            @start_date1 = '2019-09-10'
+            @end_date1 = '2019-09-13'
+            @number_of_reservations = 0
+        end
+        it "can update the list of reservations for valid date range" do
+            @expected_number_of_rooms.times do 
+                @hotel_system.make_reservation(@start_date1, @end_date1)
+                expect (@hotel_system.reservations.length).must_equal @number_of_reservations + 1
+                @number_of_reservations += 1
+            end
+            
+            expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+            
+            start_date2 = '2019-09-13'
+            end_date2 = '2019-09-17'
+            @hotel_system.make_reservation(start_date2, end_date2)
+            expect (@hotel_system.reservations.length).must_equal @number_of_reservations + 1
+        end
+        
+        it "won't modify number of rooms in hotel" do 
+            @expected_number_of_rooms.times do 
+                @hotel_system.make_reservation(@start_date1, @end_date1)
+                expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+            end
         end
         
         it "does nothing if no rooms are available" do
-            hotel_system = Hotel::HotelSystem.new()
-            start_date = '2019-09-10'
-            end_date = '2019-09-13'
-            
-            expected_number_of_rooms = hotel_system.number_of_rooms
-            
-            20.times do 
-                hotel_system.make_reservation(start_date, end_date)
+            @expected_number_of_rooms.times do 
+                @hotel_system.make_reservation(@start_date1, @end_date1)
             end
+            @number_of_reservations = @expected_number_of_rooms
             
-            number_of_reservations = hotel_system.reservations.length
-            expect (hotel_system.reservations.length).must_equal number_of_reservations
-            expect (hotel_system.number_of_rooms).must_equal expected_number_of_rooms
+            expect (@hotel_system.reservations.length).must_equal @expected_number_of_rooms
+            expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
             
-            hotel_system.make_reservation(start_date, end_date)
-            expect (hotel_system.reservations.length).must_equal number_of_reservations
+            start_date2 = '2019-09-12'
+            end_date2 = '2019-09-15'
+            @hotel_system.make_reservation(start_date2, end_date2)
+            expect (@hotel_system.reservations.length).must_equal @number_of_reservations
         end
         
         it "raises ArgumentError for invalid start and end dates" do
-            hotel_system = Hotel::HotelSystem.new()
-            start_date = '2019-09-10'
             invalid_dates = ['2019-09-33','2019-19-23','2000-09-01']
             
             invalid_dates.each do |invalid_date|
                 expect {
-                    hotel_system.make_reservation(start_date, invalid_date)
+                    @hotel_system.make_reservation(@start_date1, invalid_date)
                 }.must_raise ArgumentError
             end
         end
@@ -85,7 +128,7 @@ describe Hotel::HotelSystem do
                 expect (
                     (reservation.date_range.start_date <= date) &&
                     (date < reservation.date_range.end_date)
-                    ).must_equal true
+                ).must_equal true
             end
         end
         
