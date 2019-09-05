@@ -38,5 +38,13 @@ module Hotel
                 @rooms[room_reservations_pair[0]] << Reservation.new(date_range, RATE, reservation_id)
             end
         end
+        
+        def find_reservation_by_date(date)
+            output = reservations.select do |reservation| 
+                (reservation.date_range.start_date <= date) &&
+                (date < reservation.date_range.end_date)
+            end
+            return output
+        end
     end
 end
