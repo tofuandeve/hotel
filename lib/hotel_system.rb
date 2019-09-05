@@ -46,5 +46,13 @@ module Hotel
             end
             return output
         end
+        
+        def get_reservation_total_cost(reservation_id)
+            reservation = reservations.find { |reservation| reservation.id == reservation_id }
+            if !reservation
+                return nil
+            end
+            return reservation.cost
+        end
     end
 end

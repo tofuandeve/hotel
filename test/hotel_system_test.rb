@@ -28,7 +28,9 @@ describe Hotel::HotelSystem do
             expected_number_of_rooms = hotel_system.number_of_rooms
             
             hotel_system.make_reservation(start_date, end_date)
-            expect (hotel_system.reservations.length).must_equal (number_of_reservations + 1)
+            expect (
+                hotel_system.reservations.length
+            ).must_equal (number_of_reservations + 1)
             expect (hotel_system.number_of_rooms).must_equal expected_number_of_rooms
         end
         
@@ -57,7 +59,9 @@ describe Hotel::HotelSystem do
             invalid_dates = ['2019-09-33','2019-19-23','2000-09-01']
             
             invalid_dates.each do |invalid_date|
-                expect {hotel_system.make_reservation(start_date, invalid_date)}.must_raise ArgumentError
+                expect {
+                    hotel_system.make_reservation(start_date, invalid_date)
+                }.must_raise ArgumentError
             end
         end
     end
@@ -78,7 +82,10 @@ describe Hotel::HotelSystem do
             reservations = @hotel_system.find_reservation_by_date(date)
             expect (reservations.length).must_equal 3
             reservations.each do |reservation|
-                expect ((reservation.date_range.start_date <= date) && (date < reservation.date_range.end_date)).must_equal true
+                expect (
+                    (reservation.date_range.start_date <= date) &&
+                    (date < reservation.date_range.end_date)
+                    ).must_equal true
             end
         end
         
@@ -95,8 +102,47 @@ describe Hotel::HotelSystem do
             reservations = @hotel_system.find_reservation_by_date(date2)
             expect (reservations.length).must_equal 2
             reservations.each do |reservation|
-                expect ((reservation.date_range.start_date <= date2) && (date2 < reservation.date_range.end_date)).must_equal true
+                expect (
+                    (reservation.date_range.start_date <= date2) && 
+                    (date2 < reservation.date_range.end_date)
+                ).must_equal true
             end
+        end
+    end
+    
+    describe "get reservation total cost method" do
+        before do 
+            @hotel_system = Hotel::HotelSystem.new()
+            start_dates = ['2019-09-10','2019-09-06','2019-09-07','2019-09-13']
+            end_dates = ['2019-09-12','2019-09-14','2019-09-18','2019-09-22']
+            
+            start_dates.length.times do |index|
+                @hotel_system.make_reservation(start_dates[index], end_dates[index])
+            end
+            @reservations = @hotel_system.reservations
+        end
+        
+        it "returns a float format with 2 decimal places for total cost" do
+            reservation_id = @reservations.sample.id
+            expect (
+                @hotel_system.get_reservation_total_cost(reservation_id).to_s
+            ).must_match (/\d+\.\d\d?/)
+        end
+        
+        it "returns the total cost for a valid reservation" do
+            @reservations.each do |reservation|
+                expected_cost = reservation.cost
+                reservation_id = reservation.id
+                
+                reservation_cost = @hotel_system.get_reservation_total_cost(reservation_id)
+                expect (reservation_cost).must_equal expected_cost
+            end
+        end
+        
+        it "returns nil for a nonexistent reservation" do
+            reservation_id = 12
+            reservation = @hotel_system.get_reservation_total_cost(reservation_id)
+            assert_nil (reservation)
         end
     end
 end
