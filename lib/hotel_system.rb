@@ -31,11 +31,11 @@ module Hotel
         end
         
         def make_reservation(start_date, end_date)
-            room_reservations_pair = @rooms.find { |number, reservations| reservations.empty? }
-            if room_reservations_pair
-                date_range = DateRange.new(start_date, end_date)
+            date_range = DateRange.new(start_date, end_date)
+            available_rooms = find_available_rooms(date_range)
+            if !available_rooms.empty?
                 reservation_id = create_unique_id
-                @rooms[room_reservations_pair[0]] << Reservation.new(date_range, RATE, reservation_id)
+                @rooms[available_rooms.first] << Reservation.new(date_range, RATE, reservation_id)
             end
         end
         
@@ -53,6 +53,20 @@ module Hotel
                 return nil
             end
             return reservation.cost
+        end
+
+        def find_available_rooms(date_range)
+            available_rooms = Array.new
+            @rooms.each do |number, reservation_list|
+                if !has_overlapping(reservation_list, date_range)
+                    available_rooms << number
+                end
+            end
+            return available_rooms
+        end
+
+        def has_overlapping(list, date_range)
+            return list.any? {|reservation| reservation.date_range.overlap?(date_range) }
         end
     end
 end
