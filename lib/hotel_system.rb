@@ -48,11 +48,11 @@ module Hotel
         end
         
         def get_reservation_total_cost(reservation_id)
-            reservation = reservations.find { |reservation| reservation.id == reservation_id }
-            if !reservation
+            output_reservation = reservations.find { |reservation| reservation.id == reservation_id }
+            if !output_reservation
                 return nil
             end
-            return reservation.cost
+            return output_reservation.cost
         end
 
         def find_available_rooms(date_range)
