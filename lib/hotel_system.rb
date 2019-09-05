@@ -5,16 +5,17 @@ module Hotel
         
         attr_reader :number_of_rooms
         
-        def initialize(number_of_room = NUMBER_OF_ROOM)
-            @data = Hash.new   
-            number_of_room.times do |index|
-                @data[(index + 1)] = Array.new
+        def initialize(input_number_of_rooms = NUMBER_OF_ROOM)
+            @rooms = Hash.new   
+            @number_of_rooms = input_number_of_rooms
+            number_of_rooms.times do |index|
+                @rooms[(index + 1)] = Array.new
             end
-            @number_of_rooms = number_of_room
+            
         end
         
         def reservations
-            return @data.values.flatten
+            return @rooms.values.flatten
         end
         
         def reservation_ids
@@ -22,15 +23,15 @@ module Hotel
         end
         
         def make_reservation(start_date, end_date)
-            available_room = @data.find { |number, reservations| reservations.empty? }
-            if available_room
+            room_reservations_pair = @rooms.find { |number, reservations| reservations.empty? }
+            if room_reservations_pair
                 date_range = DateRange.new(start_date, end_date)
                 
                 reservation_id = rand(1000..9999)
                 while reservation_ids.include? reservation_id
                     reservation_id = rand(1000..9999)
                 end
-                @data[available_room[0]] << Reservation.new(date_range, RATE, reservation_id)
+                @rooms[room_reservations_pair[0]] << Reservation.new(date_range, RATE, reservation_id)
             end
         end
     end
