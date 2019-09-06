@@ -4,7 +4,7 @@ module Hotel
 
         def initialize(input_id, rooms, date_range, discount_rate)
             @id = input_id
-            @rooms = rooms
+            @rooms = rooms.dup
             @date_range = date_range
             @discount_rate = discount_rate
             

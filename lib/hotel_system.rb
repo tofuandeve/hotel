@@ -85,7 +85,22 @@ module Hotel
             raise ArgumentError.new("Block doesn't exist") if !hotel_block   
             return hotel_block.rooms
         end
+        
+        def reserve_room(room_number)
+            hotel_block_index = find_block_by_room_number(room_number)
+            if !hotel_block_index
+                raise ArgumentError.new("This room doesn't belong to any block") 
+            end
 
+            block = @hotel_blocks[hotel_block_index]
+            # add make new reservation for the input room
+            @current_reservation_id += 1
+            new_reservation = Reservation.new(block.date_range, RATE * (1 - block.discount_rate), @current_reservation_id)
+            @rooms[room_number] << new_reservation
+            # remove room out of block
+            @hotel_blocks[hotel_block_index].rooms.delete(room_number)
+        end
+        
         private
         def has_overlapping(list, date_range)
             return list.any? {|reservation| reservation.date_range.overlap?(date_range) }
@@ -101,6 +116,10 @@ module Hotel
                 end
             end
             return blocked_rooms
+        end
+
+        def find_block_by_room_number(room_number)
+            return @hotel_blocks.find_index { |block| block.rooms.include?(room_number)}
         end
     end
 end

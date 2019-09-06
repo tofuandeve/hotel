@@ -300,11 +300,11 @@ describe Hotel::HotelSystem do
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             @hotel_system.create_hotel_block(@rooms, date_range)
+            @block_id = @hotel_system.hotel_blocks.first.id
         end
         
         it "returns an array of available room of a given block" do
-            block_id = 1
-            available_rooms = @hotel_system.available_rooms_by_hotel_block(block_id)
+            available_rooms = @hotel_system.available_rooms_by_hotel_block(@block_id)
             
             expect (available_rooms).must_equal @rooms
         end
@@ -316,15 +316,46 @@ describe Hotel::HotelSystem do
         end
         
         it "returns empty array if the given block doesn't have any available room" do
-            # wait for reserve_room to be implemented
-            # block_id = 1
-            # available_rooms = @hotel_system.available_rooms_by_hotel_block(block_id)
-            # expect (available_rooms).must_equal @rooms
+            available_rooms = @hotel_system.available_rooms_by_hotel_block(@block_id)
+            expect (available_rooms).must_equal @rooms
             
-            # @rooms.each do |room|
-            #     @hotel_system.reserve_room(room)
-            # end
-            # expect {@hotel_system.available_rooms_by_hotel_block(block_id)}.must_be_empty
+            @rooms.each do |room|
+                @hotel_system.reserve_room(room)
+            end
+            expect (@hotel_system.available_rooms_by_hotel_block(@block_id)).must_be_empty
         end
+    end
+    
+    describe "available_rooms_by_hotel_block method" do
+        before do 
+            @rooms = [2, 3, 4]
+            start_date = '2019-09-20'
+            end_date = '2019-09-23'
+            
+            @date_range = Hotel::DateRange.new(start_date, end_date)
+            @hotel_system.create_hotel_block(@rooms, @date_range)
+            @block_id = @hotel_system.hotel_blocks.first.id
+        end
+        
+        it "can reserve a room in a hotel block for the entire duration" do
+            expect (@hotel_system.reservations).must_be_empty
+            
+            @rooms.each do |room|
+                @hotel_system.reserve_room(room)
+            end
+            
+            expect (@hotel_system.reservations.length).must_equal @rooms.length
+            expect (
+                @hotel_system.reservations.all? {
+                    |reservation| reservation.date_range == @date_range
+                }
+            ).must_equal true
+        end
+        
+        it "raises exception if user reserves a room that doesn't belong to any hotel block" do
+            room_number = 19
+            expect {@hotel_system.reserve_room(room_number)}.must_raise ArgumentError
+        end
+        
     end
 end
