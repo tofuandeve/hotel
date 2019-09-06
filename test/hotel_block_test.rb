@@ -3,7 +3,6 @@ require_relative 'test_helper'
 describe Hotel::HotelBlock do
     describe "Constructor" do
         it "can create a HotelBlock object for valid input" do
-            id = 1234
             rooms = [2,3,4]
             start_date = '2019-09-10'
             end_date = '2019-09-13'
@@ -11,7 +10,7 @@ describe Hotel::HotelBlock do
             discount_rate = 0.2
             
             hotel_block = Hotel::HotelBlock.new(
-                id: id, rooms: rooms, date_range: date, discount_rate: discount_rate
+                rooms: rooms, date_range: date, discount_rate: discount_rate
             )
             
             expect (hotel_block).must_be_instance_of Hotel::HotelBlock
