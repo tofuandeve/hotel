@@ -3,7 +3,7 @@ module Hotel
         attr_reader :id, :rooms, :discount_rate, :date_range
 
         def initialize(input_id, rooms, date_range, discount_rate)
-            @id = id
+            @id = input_id
             @rooms = rooms
             @date_range = date_range
             @discount_rate = discount_rate

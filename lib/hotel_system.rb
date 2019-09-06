@@ -77,6 +77,15 @@ module Hotel
             @hotel_blocks << HotelBlock.new(@current_block_id, rooms, date_range, discount)
         end
         
+        def available_rooms_by_hotel_block(block_id)
+            hotel_block = @hotel_blocks.find do |block| 
+                block.id == block_id
+            end
+            
+            raise ArgumentError.new("Block doesn't exist") if !hotel_block   
+            return hotel_block.rooms
+        end
+
         private
         def has_overlapping(list, date_range)
             return list.any? {|reservation| reservation.date_range.overlap?(date_range) }
