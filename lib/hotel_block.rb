@@ -1,6 +1,6 @@
 module Hotel
     class HotelBlock
-        attr_reader :id, :rooms, :discount_rate
+        attr_reader :id, :rooms, :discount_rate, :date_range
 
         def initialize(input_id, rooms, date_range, discount_rate)
             @id = id
