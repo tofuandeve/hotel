@@ -33,8 +33,8 @@ module Hotel
                 raise ArgumentError.new("No rooms available in this date range!")
             end
             
-            @current_reservation_id += 1
-            @rooms[available_rooms.first] << Reservation.new(date_range, RATE, @current_reservation_id)
+            reservation = add_reservation(date_range, RATE)
+            @rooms[available_rooms.first] << reservation
         end
         
         def find_reservation_by_date(date)
@@ -61,7 +61,7 @@ module Hotel
             return available_rooms
         end
         
-        def create_hotel_block(rooms, date_range, discount = DISCOUNT)
+        def create_hotel_block(rooms:, date_range:, discount: DISCOUNT)
             if rooms == nil || rooms.uniq != rooms || 
                 rooms.any? { |room| !@room_numbers.include?(room)} 
                 raise ArgumentError.new("Rooms cannot be duplicate or nil")
@@ -74,7 +74,9 @@ module Hotel
             end
             
             @current_block_id += 1
-            @hotel_blocks << HotelBlock.new(@current_block_id, rooms, date_range, discount)
+            @hotel_blocks << HotelBlock.new(
+                id: @current_block_id, rooms: rooms, date_range: date_range, discount_rate: discount
+            )
         end
         
         def available_rooms_by_hotel_block(block_id)
@@ -93,10 +95,11 @@ module Hotel
             end
 
             block = @hotel_blocks[hotel_block_index]
+
             # add make new reservation for the input room
-            @current_reservation_id += 1
-            new_reservation = Reservation.new(block.date_range, RATE * (1 - block.discount_rate), @current_reservation_id)
-            @rooms[room_number] << new_reservation
+            reservation = add_reservation(block.date_range, RATE * (1 - block.discount_rate))
+            @rooms[room_number] << reservation
+
             # remove room out of block
             @hotel_blocks[hotel_block_index].rooms.delete(room_number)
         end
@@ -120,6 +123,11 @@ module Hotel
 
         def find_block_by_room_number(room_number)
             return @hotel_blocks.find_index { |block| block.rooms.include?(room_number)}
+        end
+
+        def add_reservation(date_range, rate)
+            @current_reservation_id += 1
+            return Reservation.new(date_range: date_range, rate: rate, id: @current_reservation_id)
         end
     end
 end

@@ -115,7 +115,7 @@ describe Hotel::HotelSystem do
             end_date = '2019-09-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
-            @hotel_system.create_hotel_block(rooms, date_range)
+            @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range)
             
             
             start_date2 = '2019-09-12'
@@ -226,7 +226,7 @@ describe Hotel::HotelSystem do
             date_range = Hotel::DateRange.new(start_date, end_date)
             expect (@hotel_system.hotel_blocks).must_be_empty
             
-            @hotel_system.create_hotel_block(rooms, date_range, @discount_rate)
+            @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range, discount: @discount_rate)
             expect (@hotel_system.hotel_blocks).wont_be_empty  
         end
         
@@ -236,7 +236,7 @@ describe Hotel::HotelSystem do
             end_date1 = '2019-09-23'
             
             date_range1 = Hotel::DateRange.new(start_date1, end_date1)
-            @hotel_system.create_hotel_block(rooms1, date_range1, @discount_rate)
+            @hotel_system.create_hotel_block(rooms: rooms1, date_range: date_range1, discount: @discount_rate)
             expect (@hotel_system.hotel_blocks).wont_be_empty
             
             # create a block contains a room in another block on overlapping date_range
@@ -244,7 +244,9 @@ describe Hotel::HotelSystem do
             start_date2 = '2019-09-21'
             end_date2 = '2019-09-25'
             date_range2 = Hotel::DateRange.new(start_date2, end_date2)
-            expect {@hotel_system.create_hotel_block(rooms2, date_range2, @discount_rate)}.must_raise ArgumentError
+            expect {
+                @hotel_system.create_hotel_block(rooms: rooms2, date_range: date_range2, discount: @discount_rate)
+            }.must_raise ArgumentError
         end
         
         it "raises ArgumentError when user creates a block that has a booked room for the given date range" do
@@ -253,14 +255,16 @@ describe Hotel::HotelSystem do
             end_date1 = '2019-09-23'
             
             date_range1 = Hotel::DateRange.new(start_date1, end_date1)
-            @hotel_system.create_hotel_block(rooms1, date_range1, @discount_rate)
+            @hotel_system.create_hotel_block(rooms: rooms1, date_range: date_range1, discount: @discount_rate)
             expect (@hotel_system.hotel_blocks).wont_be_empty
             
             # make reservation on the first room available in this date range (room #1)
             @hotel_system.make_reservation(start_date1, end_date1)
             
             rooms3 = [1, 12, 13]
-            expect {@hotel_system.create_hotel_block(rooms3, date_range1, @discount_rate)}.must_raise ArgumentError
+            expect {
+                @hotel_system.create_hotel_block(rooms: rooms3, date_range: date_range1, discount: @discount_rate)
+            }.must_raise ArgumentError
         end
         
         it "raises ArgumentError if user creates a block with more than 5 rooms" do
@@ -269,7 +273,9 @@ describe Hotel::HotelSystem do
             end_date = '2019-09-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
-            expect {@hotel_system.create_hotel_block(rooms, date_range, @discount_rate)}.must_raise ArgumentError
+            expect {
+                @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range, discount: @discount_rate)
+            }.must_raise ArgumentError
             
         end
         
@@ -279,7 +285,9 @@ describe Hotel::HotelSystem do
             end_date = '2019-09-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
-            expect {@hotel_system.create_hotel_block(rooms, date_range, @discount_rate)}.must_raise ArgumentError
+            expect {
+                @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range, discount: @discount_rate)
+            }.must_raise ArgumentError
         end
         
         it "raises ArgumentError if user creates a block that has nonexistent room" do
@@ -288,7 +296,9 @@ describe Hotel::HotelSystem do
             end_date = '2019-09-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
-            expect {@hotel_system.create_hotel_block(rooms, date_range, @discount_rate)}.must_raise ArgumentError
+            expect {
+                @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range, discount: @discount_rate)
+            }.must_raise ArgumentError
         end
     end
     
@@ -299,19 +309,17 @@ describe Hotel::HotelSystem do
             end_date = '2019-09-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
-            @hotel_system.create_hotel_block(@rooms, date_range)
+            @hotel_system.create_hotel_block(rooms: @rooms, date_range: date_range)
             @block_id = @hotel_system.hotel_blocks.first.id
         end
         
         it "returns an array of available room of a given block" do
             available_rooms = @hotel_system.available_rooms_by_hotel_block(@block_id)
-            
             expect (available_rooms).must_equal @rooms
         end
         
         it "raises ArgumentError if the given block doesn't exist" do
-            block_id = 300
-            
+            block_id = 300  
             expect {@hotel_system.available_rooms_by_hotel_block(block_id)}.must_raise ArgumentError
         end
         
@@ -331,13 +339,17 @@ describe Hotel::HotelSystem do
             @rooms = [2, 3, 4]
             start_date = '2019-09-20'
             end_date = '2019-09-23'
+            @duration = 3
             
             @date_range = Hotel::DateRange.new(start_date, end_date)
-            @hotel_system.create_hotel_block(@rooms, @date_range)
+            @hotel_system.create_hotel_block(rooms: @rooms, date_range: @date_range)
             @block_id = @hotel_system.hotel_blocks.first.id
+            @discount = 0.20
+            @cost_per_night = 200.00
         end
         
         it "can reserve a room in a hotel block for the entire duration" do
+            discounted_cost = @cost_per_night * (1 - @discount) * @duration
             expect (@hotel_system.reservations).must_be_empty
             
             @rooms.each do |room|
@@ -345,11 +357,10 @@ describe Hotel::HotelSystem do
             end
             
             expect (@hotel_system.reservations.length).must_equal @rooms.length
-            expect (
-                @hotel_system.reservations.all? {
-                    |reservation| reservation.date_range == @date_range
-                }
-            ).must_equal true
+            @hotel_system.reservations.each do |reservation| 
+                expect (reservation.date_range).must_equal @date_range
+                expect (reservation.cost).must_equal discounted_cost
+            end
         end
         
         it "raises exception if user reserves a room that doesn't belong to any hotel block" do

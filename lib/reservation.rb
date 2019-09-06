@@ -2,7 +2,7 @@ module Hotel
     class Reservation
         attr_reader :id, :date_range, :rate, :cost
         
-        def initialize(date_range, rate, id)
+        def initialize(date_range:, rate:, id:)
             @date_range = date_range
             @rate = rate
             @id = id
