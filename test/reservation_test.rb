@@ -3,8 +3,8 @@ require_relative 'test_helper'
 describe Hotel::Reservation do
     describe "Constructor" do
         it "can construct a reservation from date range" do
-            start_date = '2019-09-10'
-            end_date = '2019-09-13'
+            start_date = '2020-09-10'
+            end_date = '2020-09-13'
             date_range = Hotel::DateRange.new(start_date, end_date)
             rate = 200.00
 
@@ -16,8 +16,8 @@ describe Hotel::Reservation do
     
     describe "Reservation class property" do
         it "doesn't charge checkout date for reservation's cost" do
-            start_date = '2019-09-10'
-            end_date = '2019-09-13'
+            start_date = '2020-09-10'
+            end_date = '2020-09-13'
             date_range = Hotel::DateRange.new(start_date, end_date)
             rate = 200.00
             stay_duration = 3

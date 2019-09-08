@@ -4,8 +4,8 @@ describe Hotel::HotelBlock do
     describe "Constructor" do
         it "can create a HotelBlock object for valid input" do
             rooms = [2,3,4]
-            start_date = '2019-09-10'
-            end_date = '2019-09-13'
+            start_date = '2020-09-10'
+            end_date = '2020-09-13'
             date = Hotel::DateRange.new(start_date, end_date)
             discount_rate = 0.2
             

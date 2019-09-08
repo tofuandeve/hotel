@@ -23,8 +23,8 @@ describe Hotel::HotelSystem do
     describe "find_available_rooms method" do
         before do
             @rooms = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-            @start_date1 = '2019-09-09'
-            @end_date1 = '2019-09-15'
+            @start_date1 = '2020-01-09'
+            @end_date1 = '2020-01-15'
             @date1 = Hotel::DateRange.new(@start_date1, @end_date1)       
         end
         
@@ -42,8 +42,8 @@ describe Hotel::HotelSystem do
                 @hotel_system.make_reservation(@start_date1, @end_date1)
             end
             
-            start_date2 = '2019-09-10'
-            end_date2 = '2019-09-13'
+            start_date2 = '2020-01-10'
+            end_date2 = '2020-01-13'
             date2 = Hotel::DateRange.new(start_date2, end_date2)  
             
             available_rooms = @hotel_system.find_available_rooms(date2) 
@@ -53,8 +53,8 @@ describe Hotel::HotelSystem do
     
     describe "make reservation method" do
         before do
-            @start_date1 = '2019-09-10'
-            @end_date1 = '2019-09-13'
+            @start_date1 = '2020-01-10'
+            @end_date1 = '2020-01-13'
             @number_of_reservations = 0
         end
         
@@ -67,8 +67,8 @@ describe Hotel::HotelSystem do
             
             expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
             
-            start_date2 = '2019-09-13'
-            end_date2 = '2019-09-17'
+            start_date2 = '2020-01-13'
+            end_date2 = '2020-01-17'
             @hotel_system.make_reservation(start_date2, end_date2)
             expect (@hotel_system.reservations.length).must_equal @number_of_reservations + 1
         end
@@ -89,13 +89,13 @@ describe Hotel::HotelSystem do
             expect (@hotel_system.reservations.length).must_equal @expected_number_of_rooms
             expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
             
-            start_date2 = '2019-09-12'
-            end_date2 = '2019-09-15'
+            start_date2 = '2020-01-12'
+            end_date2 = '2020-01-15'
             expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise ArgumentError
         end
         
         it "raises ArgumentError for invalid start and end dates" do
-            invalid_dates = ['2019-09-33','2019-19-23','2000-09-01']
+            invalid_dates = ['2020-01-33','2019-19-23','2000-09-01']
             
             invalid_dates.each do |invalid_date|
                 expect {
@@ -111,23 +111,23 @@ describe Hotel::HotelSystem do
             end
             
             rooms = [18, 19, 20]
-            start_date = '2019-09-10'
-            end_date = '2019-09-23'
+            start_date = '2020-01-10'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             @hotel_system.create_hotel_block(rooms: rooms, date_range: date_range)
             
             
-            start_date2 = '2019-09-12'
-            end_date2 = '2019-09-15'
+            start_date2 = '2020-01-12'
+            end_date2 = '2020-01-15'
             expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise ArgumentError
         end
     end
     
     describe "find reservation by date method" do
         before do 
-            start_dates = ['2019-09-10','2019-09-06','2019-09-07','2019-09-13']
-            end_dates = ['2019-09-12','2019-09-14','2019-09-18','2019-09-22']
+            start_dates = ['2020-01-10','2020-01-06','2020-01-07','2020-01-13']
+            end_dates = ['2020-01-12','2020-01-14','2020-01-18','2020-01-22']
             
             start_dates.length.times do |index|
                 @hotel_system.make_reservation(start_dates[index], end_dates[index])
@@ -135,7 +135,7 @@ describe Hotel::HotelSystem do
         end
         
         it "returns an array of reservations that has same date in their date ranges" do
-            date = Date.parse('2019-09-10')
+            date = Date.parse('2020-01-10')
             reservations = @hotel_system.find_reservation_by_date(date)
             expect (reservations.length).must_equal 3
             reservations.each do |reservation|
@@ -147,15 +147,15 @@ describe Hotel::HotelSystem do
         end
         
         it "returns nil if there's no reservations found on that date" do
-            date = Date.parse('2019-09-05')
+            date = Date.parse('2020-01-05')
             expect (@hotel_system.find_reservation_by_date(date)).must_be_empty	
         end
         
         it "ignore reservations that has same checkout dates as that date" do
-            date1 = Date.parse('2019-09-22')
+            date1 = Date.parse('2020-01-22')
             expect (@hotel_system.find_reservation_by_date(date1)).must_be_empty
             
-            date2 = Date.parse('2019-09-12')
+            date2 = Date.parse('2020-01-12')
             reservations = @hotel_system.find_reservation_by_date(date2)
             expect (reservations.length).must_equal 2
             reservations.each do |reservation|
@@ -169,8 +169,8 @@ describe Hotel::HotelSystem do
     
     describe "get reservation total cost method" do
         before do 
-            start_dates = ['2019-09-10','2019-09-06','2019-09-07','2019-09-13']
-            end_dates = ['2019-09-12','2019-09-14','2019-09-18','2019-09-22']
+            start_dates = ['2020-01-10','2020-01-06','2020-01-07','2020-01-13']
+            end_dates = ['2020-01-12','2020-01-14','2020-01-18','2020-01-22']
             
             start_dates.length.times do |index|
                 @hotel_system.make_reservation(start_dates[index], end_dates[index])
@@ -196,7 +196,7 @@ describe Hotel::HotelSystem do
         end
         
         it "returns nil for a nonexistent reservation" do
-            reservation_id = 12
+            reservation_id = 1200
             reservation = @hotel_system.get_reservation_total_cost(reservation_id)
             assert_nil (reservation)
         end
@@ -204,15 +204,15 @@ describe Hotel::HotelSystem do
     
     describe "create_hotel_block method" do
         before do
-            start_date1 = '2019-09-10'
-            end_date1 = '2019-09-13'
+            start_date1 = '2020-01-10'
+            end_date1 = '2020-01-13'
             # make reservations on the same date range for every room
             @expected_number_of_rooms.times do 
                 @hotel_system.make_reservation(start_date1, end_date1)
             end
             
-            start_date2 = '2019-09-13'
-            end_date2 = '2019-09-17'
+            start_date2 = '2020-01-13'
+            end_date2 = '2020-01-17'
             # make another reservation for room #1
             @hotel_system.make_reservation(start_date2, end_date2)
             @discount_rate = 0.20
@@ -220,8 +220,8 @@ describe Hotel::HotelSystem do
         
         it "creates a block for valid rooms, date_range, discount_rate" do
             rooms = [2, 3, 4]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             expect (@hotel_system.hotel_blocks).must_be_empty
@@ -232,8 +232,8 @@ describe Hotel::HotelSystem do
         
         it "raises ArgumentError when user creates a block that belongs to another block for the given date range" do
             rooms1 = [2, 3, 4]
-            start_date1 = '2019-09-20'
-            end_date1 = '2019-09-23'
+            start_date1 = '2020-01-20'
+            end_date1 = '2020-01-23'
             
             date_range1 = Hotel::DateRange.new(start_date1, end_date1)
             @hotel_system.create_hotel_block(rooms: rooms1, date_range: date_range1, discount: @discount_rate)
@@ -241,8 +241,8 @@ describe Hotel::HotelSystem do
             
             # create a block contains a room in another block on overlapping date_range
             rooms2 = [4, 5, 6]
-            start_date2 = '2019-09-21'
-            end_date2 = '2019-09-25'
+            start_date2 = '2020-01-21'
+            end_date2 = '2020-01-25'
             date_range2 = Hotel::DateRange.new(start_date2, end_date2)
             expect {
                 @hotel_system.create_hotel_block(rooms: rooms2, date_range: date_range2, discount: @discount_rate)
@@ -251,8 +251,8 @@ describe Hotel::HotelSystem do
         
         it "raises ArgumentError when user creates a block that has a booked room for the given date range" do
             rooms1 = [2, 3, 4]
-            start_date1 = '2019-09-20'
-            end_date1 = '2019-09-23'
+            start_date1 = '2020-01-20'
+            end_date1 = '2020-01-23'
             
             date_range1 = Hotel::DateRange.new(start_date1, end_date1)
             @hotel_system.create_hotel_block(rooms: rooms1, date_range: date_range1, discount: @discount_rate)
@@ -269,8 +269,8 @@ describe Hotel::HotelSystem do
         
         it "raises ArgumentError if user creates a block with more than 5 rooms" do
             rooms = [2, 3, 4, 5, 7, 10]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             expect {
@@ -281,8 +281,8 @@ describe Hotel::HotelSystem do
         
         it "raises ArgumentError if user creates a block that has duplicate room" do
             rooms = [2, 3, 4, 4, 7]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             expect {
@@ -292,8 +292,8 @@ describe Hotel::HotelSystem do
         
         it "raises ArgumentError if user creates a block that has nonexistent room" do
             rooms = [2, 3, 4, 4, 27]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             expect {
@@ -305,8 +305,8 @@ describe Hotel::HotelSystem do
     describe "available_rooms_by_hotel_block method" do
         before do 
             @rooms = [2, 3, 4]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             
             date_range = Hotel::DateRange.new(start_date, end_date)
             @hotel_system.create_hotel_block(rooms: @rooms, date_range: date_range)
@@ -337,8 +337,8 @@ describe Hotel::HotelSystem do
     describe "available_rooms_by_hotel_block method" do
         before do 
             @rooms = [2, 3, 4]
-            start_date = '2019-09-20'
-            end_date = '2019-09-23'
+            start_date = '2020-01-20'
+            end_date = '2020-01-23'
             @duration = 3
             
             @date_range = Hotel::DateRange.new(start_date, end_date)
