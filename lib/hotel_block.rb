@@ -1,5 +1,6 @@
 module Hotel
     class HotelBlock
+        MAX_NUMBER_OF_ROOMS = 5
         @@current_id = 0
         attr_reader :id, :rooms, :discount_rate, :date_range
 
@@ -10,8 +11,8 @@ module Hotel
             @date_range = date_range
             @discount_rate = discount_rate
             
-            if rooms.length <= 0 || rooms.length > 5
-                raise ArgumentError.new("Can only add up to 5 rooms to a block!")
+            if rooms.length <= 0 || rooms.length > MAX_NUMBER_OF_ROOMS
+                raise ArgumentError.new("Can only add up to #{MAX_NUMBER_OF_ROOMS} rooms to a block!")
             end
         end
     end  

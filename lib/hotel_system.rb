@@ -1,26 +1,26 @@
 module Hotel
     class HotelSystem
         RATE = 200.00
-        NUMBER_OF_ROOM = 20
+        NUMBER_OF_ROOMS = 20
         DISCOUNT = 0.20
         
-        attr_reader :hotel_blocks
+        attr_reader :hotel_blocks, :rooms
         
-        def initialize(input_number_of_rooms = NUMBER_OF_ROOM)
-            @rooms = Hash.new   
-            number_of_rooms.times do |index|
-                @rooms[(index + 1)] = Array.new
+        def initialize(input_number_of_rooms = NUMBER_OF_ROOMS)
+            @room_reservation_data = Hash.new   
+            input_number_of_rooms.times do |index|
+                @room_reservation_data[(index + 1)] = Array.new
             end
-            @room_numbers = @rooms.keys
+            @rooms = @room_reservation_data.keys
             @hotel_blocks = Array.new
         end
         
         def number_of_rooms
-            return NUMBER_OF_ROOM
+            return NUMBER_OF_ROOMS
         end
         
         def reservations
-            return @rooms.values.flatten
+            return @room_reservation_data.values.flatten
         end
         
         def make_reservation(start_date, end_date)
@@ -28,11 +28,11 @@ module Hotel
             available_rooms = find_available_rooms(date_range)
             
             if available_rooms.empty?
-                raise ArgumentError.new("No rooms available in this date range!")
+                raise ArgumentError.new("No rooms available in this date range: #{start_date} - #{end_date}!")
             end
             
-            reservation = add_reservation(date_range, RATE)
-            @rooms[available_rooms.first] << reservation
+            reservation = create_reservation(date_range, RATE)
+            @room_reservation_data[available_rooms.first] << reservation
         end
         
         def find_reservation_by_date(date)
@@ -52,80 +52,83 @@ module Hotel
         end
         
         def find_available_rooms(date_range)
-            blocked_rooms = find_blocked_rooms_overlap_in_date_range(date_range)
-            available_rooms = @room_numbers.select { 
-                |number| !has_overlapping(@rooms[number], date_range) && !blocked_rooms.include?(number)
-            }
+            blocked_rooms = find_overlapping_rooms_in_hotel_blocks(date_range)
+            available_rooms = @rooms.select do |number| 
+                !has_overlapping(@room_reservation_data[number], date_range) &&
+                !blocked_rooms.include?(number)
+            end
             return available_rooms
         end
         
         def create_hotel_block(rooms:, date_range:, discount: DISCOUNT)
-            if rooms == nil || rooms.uniq != rooms || 
-                rooms.any? { |room| !@room_numbers.include?(room)} 
+            if rooms == nil ||
+                rooms.uniq != rooms || 
+                rooms.any? { |room| !@rooms.include?(room)} 
+                
                 raise ArgumentError.new("Rooms cannot be duplicate or nil")
             end
             
             available_rooms = find_available_rooms(date_range)
             unavailable_room = rooms.find { |room| !available_rooms.include?(room) }
             if unavailable_room
-                raise ArgumentError.new("Room number #{unavailable_room} is not available on this date range!")
+                raise ArgumentError.new(
+                    "Room number #{unavailable_room} is not available on this date range!"
+                )
             end
             
-            hotel_block = add_hotel_block(rooms: rooms, date_range: date_range, discount: discount)
+            hotel_block = create_block(rooms: rooms, date_range: date_range, discount: discount)
             @hotel_blocks << hotel_block
         end
         
-        def available_rooms_by_hotel_block(block_id)
+        def available_rooms_in_block(block_id)
             hotel_block = @hotel_blocks.find do |block| 
                 block.id == block_id
             end
             
-            raise ArgumentError.new("Block doesn't exist") if !hotel_block   
+            raise ArgumentError.new("Block #{block_id} doesn't exist") if !hotel_block   
             return hotel_block.rooms
         end
         
         def reserve_room(room_number)
-            hotel_block_index = find_block_by_room_number(room_number)
+            hotel_block_index = find_block_index(room_number)
             if !hotel_block_index
-                raise ArgumentError.new("This room doesn't belong to any block") 
+                raise ArgumentError.new("Room #{room_number} doesn't belong to any block") 
             end
             
             block = @hotel_blocks[hotel_block_index]
             
             # add make new reservation for the input room
-            reservation = add_reservation(block.date_range, RATE * (1 - block.discount_rate))
-            @rooms[room_number] << reservation
+            reservation = create_reservation(block.date_range, RATE * (1 - block.discount_rate))
+            @room_reservation_data[room_number] << reservation
             
-            # remove room out of block
+            # remove room out of block's room list
             @hotel_blocks[hotel_block_index].rooms.delete(room_number)
         end
         
         private
-        def has_overlapping(list, date_range)
-            return list.any? {|reservation| reservation.date_range.overlap?(date_range) }
+        def has_overlapping(reservations, date_range)
+            return reservations.any? {|reservation| reservation.date_range.overlap?(date_range) }
         end
         
-        def find_blocked_rooms_overlap_in_date_range(date_range)
+        def find_overlapping_rooms_in_hotel_blocks(date_range)
             blocked_rooms = Array.new
             @hotel_blocks.each do |block|
                 if block.date_range.overlap?(date_range)
-                    block.rooms.each do |room|
-                        blocked_rooms << room
-                    end
+                    blocked_rooms += block.rooms
                 end
             end
             return blocked_rooms
         end
         
-        def find_block_by_room_number(room_number)
+        def find_block_index(room_number)
             return @hotel_blocks.find_index { |block| block.rooms.include?(room_number)}
         end
         
-        def add_reservation(date_range, rate)
+        def create_reservation(date_range, rate)
             return Reservation.new(date_range: date_range, rate: rate)
         end
         
-        def add_hotel_block(rooms:, date_range:, discount:)
+        def create_block(rooms:, date_range:, discount:)
             return HotelBlock.new(rooms: rooms, date_range: date_range, discount_rate: discount)
         end
     end

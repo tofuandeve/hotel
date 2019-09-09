@@ -292,7 +292,7 @@ describe Hotel::HotelSystem do
         end
     end
     
-    describe "available_rooms_by_hotel_block method" do
+    describe "available_rooms_in_block method" do
         before do 
             @rooms = [2, 3, 4]
             @hotel_system.create_hotel_block(rooms: @rooms, date_range: @date_range)
@@ -300,27 +300,27 @@ describe Hotel::HotelSystem do
         end
         
         it "returns an array of available room of a given block" do
-            available_rooms = @hotel_system.available_rooms_by_hotel_block(@block_id)
+            available_rooms = @hotel_system.available_rooms_in_block(@block_id)
             expect (available_rooms).must_equal @rooms
         end
         
         it "raises ArgumentError if the given block doesn't exist" do
             block_id = 300  
-            expect {@hotel_system.available_rooms_by_hotel_block(block_id)}.must_raise ArgumentError
+            expect {@hotel_system.available_rooms_in_block(block_id)}.must_raise ArgumentError
         end
         
         it "returns empty array if the given block doesn't have any available room" do
-            available_rooms = @hotel_system.available_rooms_by_hotel_block(@block_id)
+            available_rooms = @hotel_system.available_rooms_in_block(@block_id)
             expect (available_rooms).must_equal @rooms
             
             @rooms.each do |room|
                 @hotel_system.reserve_room(room)
             end
-            expect (@hotel_system.available_rooms_by_hotel_block(@block_id)).must_be_empty
+            expect (@hotel_system.available_rooms_in_block(@block_id)).must_be_empty
         end
     end
     
-    describe "available_rooms_by_hotel_block method" do
+    describe "available_rooms_in_block method" do
         before do 
             @rooms = [2, 3, 4]
             @hotel_system.create_hotel_block(rooms: @rooms, date_range: @date_range)
