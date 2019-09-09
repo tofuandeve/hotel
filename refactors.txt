@@ -1,0 +1,10 @@
+1. Naming:
+    - Replacing start_date with checkin_date, end_date with checkout_date. 
+    - Find a better name for @room_reservation_data 
+    
+2. Implementation
+    - Refactor HotelSystem class to reduce dependency on other classes (DateRange, HotelBlock, Reservation)
+    - Should HotelBlock be removed?
+    - Should there be a Rate class? or Room class where rate will be passed in to constructor as argument?
+    - Implement read_data() and write_data() methods for @room_reservation_data and @hotel_blocks
+    - Create main.rb to interact with HotelSystem
