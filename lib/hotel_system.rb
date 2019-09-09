@@ -52,6 +52,8 @@ module Hotel
         end
         
         def find_available_rooms(date_range)
+            raise ArgumentError.new('Date range cannot be nil') if !date_range
+
             blocked_rooms = find_overlapping_rooms_in_hotel_blocks(date_range)
             available_rooms = @rooms.select do |number| 
                 !has_overlapping(@room_reservation_data[number], date_range) &&

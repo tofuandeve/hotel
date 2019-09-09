@@ -25,6 +25,11 @@ describe Hotel::HotelSystem do
         it "allows user to access a list of Reservation" do
             expect (@hotel_system.reservations).must_be_instance_of Array
         end
+        
+        it "can return list of reservations and list of rooms" do
+            expect (@hotel_system.rooms).must_be_instance_of Array
+            expect (@hotel_system.reservations).must_be_instance_of Array
+        end
     end
     
     describe "find_available_rooms method" do
@@ -33,7 +38,7 @@ describe Hotel::HotelSystem do
         end
         
         it "returns an array of available rooms" do
-            available_rooms = @hotel_system.find_available_rooms(@date)
+            available_rooms = @hotel_system.find_available_rooms(@date_range)
             expect (available_rooms).must_be_instance_of Array
             expect (available_rooms).must_equal @rooms
             
