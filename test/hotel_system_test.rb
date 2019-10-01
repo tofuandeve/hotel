@@ -112,7 +112,7 @@ describe Hotel::HotelSystem do
       end
     end
     
-    it "raise ArgumentError if user tries to book a room has been set aside for an overlapping date range" do
+    it "raise StandardError if user tries to book a room has been set aside for an overlapping date range" do
       17.times do 
         @hotel_system.make_reservation(@start_date, @end_date)
         @number_of_reservations += 1
@@ -125,7 +125,7 @@ describe Hotel::HotelSystem do
       
       start_date2 = @start_date + 2
       end_date2 = start_date2 + @duration
-      expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise ArgumentError
+      expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise StandardError
     end
   end
   

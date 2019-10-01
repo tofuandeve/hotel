@@ -1,3 +1,7 @@
+require_relative 'date_range'
+require_relative 'reservation'
+require_relative 'hotel_block'
+
 module Hotel
   class HotelSystem
     RATE = 200.00
@@ -28,7 +32,7 @@ module Hotel
       available_rooms = find_available_rooms(date_range)
       
       if available_rooms.empty?
-        raise ArgumentError.new("No rooms available in this date range: #{start_date} - #{end_date}!")
+        raise StandardError.new("No rooms available in this date range: #{start_date} - #{end_date}!")
       end
       
       reservation = create_reservation(date_range, RATE)
