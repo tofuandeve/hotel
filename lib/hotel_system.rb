@@ -26,7 +26,7 @@ module Hotel
     def reservations
       return @room_reservation_data.values.flatten
     end
-    
+
     def make_reservation(start_date, end_date)
       date_range = DateRange.new(start_date, end_date)
       available_rooms = find_available_rooms(date_range)
@@ -35,8 +35,9 @@ module Hotel
         raise StandardError.new("No rooms available in this date range: #{start_date} - #{end_date}!")
       end
       
-      reservation = create_reservation(date_range, RATE)
-      @room_reservation_data[available_rooms.first] << reservation
+      room_number = available_rooms.first
+      reservation = create_reservation(date_range: date_range, rate: RATE, room_number: room_number)
+      @room_reservation_data[room_number] << reservation
     end
     
     def find_reservation_by_date(date)
@@ -104,7 +105,7 @@ module Hotel
       block = @hotel_blocks[hotel_block_index]
       
       # add make new reservation for the input room
-      reservation = create_reservation(block.date_range, RATE * (1 - block.discount_rate))
+      reservation = create_reservation(date_range: block.date_range, rate: RATE * (1 - block.discount_rate), room_number: room_number)
       @room_reservation_data[room_number] << reservation
       
       # remove room out of block's room list
@@ -130,8 +131,8 @@ module Hotel
       return @hotel_blocks.find_index { |block| block.rooms.include?(room_number)}
     end
     
-    def create_reservation(date_range, rate)
-      return Reservation.new(date_range: date_range, rate: rate)
+    def create_reservation(date_range:, rate:, room_number:)
+      return Reservation.new(date_range: date_range, rate: rate, room_number: room_number)
     end
     
     def create_block(rooms:, date_range:, discount:)

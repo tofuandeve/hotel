@@ -5,6 +5,7 @@ describe Hotel::Reservation do
     @current_date = Date.today()
     @duration = 10
     @rate = 200.00
+    @room_number = 1
     
     @start_date = @current_date + 30
     @end_date = @start_date + @duration
@@ -13,7 +14,7 @@ describe Hotel::Reservation do
   
   describe "Constructor" do
     it "can construct a reservation from date range" do
-      reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate)
+      reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate, room_number: @room_number)
       expect _(reservation).must_be_instance_of Hotel::Reservation
       expect _(reservation.date_range).must_equal @date_range
     end
@@ -23,7 +24,7 @@ describe Hotel::Reservation do
     it "doesn't charge checkout date for reservation's cost" do
       expected_cost = @duration * @rate
       
-      reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate)
+      reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate, room_number: @room_number)
       expect _(reservation.cost).must_equal expected_cost
     end
   end
