@@ -325,7 +325,7 @@ describe Hotel::HotelSystem do
     end
   end
   
-  describe "available_rooms_in_block method" do
+  describe "reserve_room method" do
     before do 
       @rooms = [2, 3, 4]
       @hotel_system.create_hotel_block(rooms: @rooms, date_range: @date_range)
