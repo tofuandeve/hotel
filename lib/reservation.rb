@@ -11,5 +11,9 @@ module Hotel
       @cost = (date_range.start_date - date_range.end_date).abs * rate
       @room_number = room_number
     end
+
+    def details 
+      return "ID: #{id} -- Room number: #{room_number} -- Checkin: #{date_range.start_date} -- Checkout: #{date_range.end_date} -- total: $#{cost}"
+    end
   end
 end

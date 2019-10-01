@@ -26,7 +26,11 @@ module Hotel
     def reservations
       return @room_reservation_data.values.flatten
     end
-
+    
+    def reservations_details
+      return reservations.map {|reservation| reservation.details }
+    end
+    
     def make_reservation(start_date, end_date)
       date_range = DateRange.new(start_date, end_date)
       available_rooms = find_available_rooms(date_range)
