@@ -11,7 +11,7 @@ describe Hotel::DateRange do
   end
   describe "Constructor" do
     it "can construct a DateRange object" do
-      expect (@date_range).must_be_instance_of Hotel::DateRange
+      expect _(@date_range).must_be_instance_of Hotel::DateRange
     end
     
     it "raises ArgumentError for invalid start date and end date" do
@@ -39,9 +39,9 @@ describe Hotel::DateRange do
       end_date3 = @end_date + 1
       date3 = Hotel::DateRange.new(start_date3, end_date3)
       
-      expect (@date_range.overlap?(date1)).must_equal true
-      expect (@date_range.overlap?(date2)).must_equal true
-      expect (@date_range.overlap?(date3)).must_equal true
+      expect _(@date_range.overlap?(date1)).must_equal true
+      expect _(@date_range.overlap?(date2)).must_equal true
+      expect _(@date_range.overlap?(date3)).must_equal true
     end
     
     it "returns false if 2 date ranges don't overlap" do
@@ -57,9 +57,9 @@ describe Hotel::DateRange do
       end_date3 = start_date3 + 5
       date3 = Hotel::DateRange.new(start_date3, end_date3)
       
-      expect (@date_range.overlap?(date1)).must_equal false
-      expect (@date_range.overlap?(date2)).must_equal false
-      expect (@date_range.overlap?(date3)).must_equal false
+      expect _(@date_range.overlap?(date1)).must_equal false
+      expect _(@date_range.overlap?(date2)).must_equal false
+      expect _(@date_range.overlap?(date3)).must_equal false
     end
   end
 end

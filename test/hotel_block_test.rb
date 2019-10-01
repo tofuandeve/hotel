@@ -17,7 +17,7 @@ describe Hotel::HotelBlock do
         rooms: rooms, date_range: @date_range, discount_rate: @discount_rate
       )
       
-      expect (hotel_block).must_be_instance_of Hotel::HotelBlock
+      expect _(hotel_block).must_be_instance_of Hotel::HotelBlock
     end
     
     it "raises ArgumentError if list of rooms has more than 5 rooms" do

@@ -15,20 +15,20 @@ describe Hotel::HotelSystem do
   
   describe "Constructor" do
     it "can instantiate a HotelSystem object" do
-      expect (@hotel_system).must_be_instance_of Hotel::HotelSystem
+      expect _(@hotel_system).must_be_instance_of Hotel::HotelSystem
     end
     
     it "can instantiate a HotelSystem that tracks 20 rooms" do
-      expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+      expect _(@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
     end
     
     it "allows user to access a list of Reservation" do
-      expect (@hotel_system.reservations).must_be_instance_of Array
+      expect _(@hotel_system.reservations).must_be_instance_of Array
     end
     
     it "can return list of reservations and list of rooms" do
-      expect (@hotel_system.rooms).must_be_instance_of Array
-      expect (@hotel_system.reservations).must_be_instance_of Array
+      expect _(@hotel_system.rooms).must_be_instance_of Array
+      expect _(@hotel_system.reservations).must_be_instance_of Array
     end
   end
   
@@ -39,11 +39,11 @@ describe Hotel::HotelSystem do
     
     it "returns an array of available rooms" do
       available_rooms = @hotel_system.find_available_rooms(@date_range)
-      expect (available_rooms).must_be_instance_of Array
-      expect (available_rooms).must_equal @rooms
+      expect _(available_rooms).must_be_instance_of Array
+      expect _(available_rooms).must_equal @rooms
       
       @hotel_system.make_reservation(@start_date, @end_date)
-      expect (@hotel_system.find_available_rooms(@date_range)).wont_equal @rooms     
+      expect _(@hotel_system.find_available_rooms(@date_range)).wont_equal @rooms     
     end
     
     it "returns an empty array if there is no rooms available" do
@@ -56,7 +56,7 @@ describe Hotel::HotelSystem do
       date_range2 = Hotel::DateRange.new(start_date2, end_date2)  
       
       available_rooms = @hotel_system.find_available_rooms(date_range2) 
-      expect (available_rooms).must_be_empty
+      expect _(available_rooms).must_be_empty
     end
   end
   
@@ -68,37 +68,37 @@ describe Hotel::HotelSystem do
     it "can update the list of reservations for valid date range" do
       @expected_number_of_rooms.times do 
         @hotel_system.make_reservation(@start_date, @end_date)
-        expect (@hotel_system.reservations.length).must_equal @number_of_reservations + 1
+        expect _(@hotel_system.reservations.length).must_equal @number_of_reservations + 1
         @number_of_reservations += 1
       end
       
-      expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+      expect _(@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
       
       start_date2 = @end_date
       end_date2 = start_date2 + @duration
       @hotel_system.make_reservation(start_date2, end_date2)
-      expect (@hotel_system.reservations.length).must_equal @number_of_reservations + 1
+      expect _(@hotel_system.reservations.length).must_equal @number_of_reservations + 1
     end
     
     it "won't modify number of rooms in hotel" do 
       @expected_number_of_rooms.times do 
         @hotel_system.make_reservation(@start_date, @end_date)
-        expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+        expect _(@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
       end
     end
     
-    it "raises ArgumentError if no rooms are available" do
+    it "raises StandardError if no rooms are available" do
       @expected_number_of_rooms.times do 
         @hotel_system.make_reservation(@start_date, @end_date)
       end
       @number_of_reservations = @expected_number_of_rooms
       
-      expect (@hotel_system.reservations.length).must_equal @expected_number_of_rooms
-      expect (@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
+      expect _(@hotel_system.reservations.length).must_equal @expected_number_of_rooms
+      expect _(@hotel_system.number_of_rooms).must_equal @expected_number_of_rooms
       
       start_date2 = @start_date + 2
       end_date2 = start_date2 + @duration
-      expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise ArgumentError
+      expect {@hotel_system.make_reservation(start_date2, end_date2)}.must_raise StandardError
     end
     
     it "raises ArgumentError for invalid start and end dates" do
@@ -144,9 +144,9 @@ describe Hotel::HotelSystem do
     it "returns an array of reservations that has same date in their date ranges" do
       date = Date.parse('2020-01-10')
       reservations = @hotel_system.find_reservation_by_date(date)
-      expect (reservations.length).must_equal 3
+      expect _(reservations.length).must_equal 3
       reservations.each do |reservation|
-        expect (
+        expect _(
           (reservation.date_range.start_date <= date) &&
           (date < reservation.date_range.end_date)
         ).must_equal true
@@ -155,18 +155,18 @@ describe Hotel::HotelSystem do
     
     it "returns nil if there's no reservations found on that date" do
       date = Date.parse('2020-01-05')
-      expect (@hotel_system.find_reservation_by_date(date)).must_be_empty	
+      expect _(@hotel_system.find_reservation_by_date(date)).must_be_empty	
     end
     
     it "ignore reservations that has same checkout dates as that date" do
       date1 = Date.parse('2020-01-22')
-      expect (@hotel_system.find_reservation_by_date(date1)).must_be_empty
+      expect _(@hotel_system.find_reservation_by_date(date1)).must_be_empty
       
       date2 = Date.parse('2020-01-12')
       reservations = @hotel_system.find_reservation_by_date(date2)
-      expect (reservations.length).must_equal 2
+      expect _(reservations.length).must_equal 2
       reservations.each do |reservation|
-        expect (
+        expect _(
           (reservation.date_range.start_date <= date2) && 
           (date2 < reservation.date_range.end_date)
         ).must_equal true
@@ -189,7 +189,7 @@ describe Hotel::HotelSystem do
     
     it "returns a float format with 2 decimal places for total cost" do
       reservation_id = @reservations.sample.id
-      expect (
+      expect _(
         @hotel_system.get_reservation_total_cost(reservation_id).to_s
       ).must_match (/\d+\.\d\d?/)
     end
@@ -200,7 +200,7 @@ describe Hotel::HotelSystem do
         reservation_id = reservation.id
         
         reservation_cost = @hotel_system.get_reservation_total_cost(reservation_id)
-        expect (reservation_cost).must_equal expected_cost
+        expect _(reservation_cost).must_equal expected_cost
       end
     end
     
@@ -231,10 +231,10 @@ describe Hotel::HotelSystem do
       end_date3 = start_date3 + @duration
       
       date_range3 = Hotel::DateRange.new(start_date3, end_date3)
-      expect (@hotel_system.hotel_blocks).must_be_empty
+      expect _(@hotel_system.hotel_blocks).must_be_empty
       
       @hotel_system.create_hotel_block(rooms: rooms3, date_range: date_range3, discount: @discount_rate)
-      expect (@hotel_system.hotel_blocks).wont_be_empty  
+      expect _(@hotel_system.hotel_blocks).wont_be_empty  
     end
     
     it "raises ArgumentError when user creates a block that belongs to another block for the given date range" do
@@ -244,7 +244,7 @@ describe Hotel::HotelSystem do
       
       date_range3 = Hotel::DateRange.new(start_date3, end_date3)
       @hotel_system.create_hotel_block(rooms: rooms3, date_range: date_range3, discount: @discount_rate)
-      expect (@hotel_system.hotel_blocks).wont_be_empty
+      expect _(@hotel_system.hotel_blocks).wont_be_empty
       
       # create a block contains a room in another block on overlapping date_range
       rooms4 = [4, 5, 6]
@@ -263,7 +263,7 @@ describe Hotel::HotelSystem do
       
       date_range3 = Hotel::DateRange.new(start_date3, end_date3)
       @hotel_system.create_hotel_block(rooms: rooms3, date_range: date_range3, discount: @discount_rate)
-      expect (@hotel_system.hotel_blocks).wont_be_empty
+      expect _(@hotel_system.hotel_blocks).wont_be_empty
       
       # make reservation on the first room available in this date range (room #1)
       @hotel_system.make_reservation(start_date3, end_date3)
@@ -306,7 +306,7 @@ describe Hotel::HotelSystem do
     
     it "returns an array of available room of a given block" do
       available_rooms = @hotel_system.available_rooms_in_block(@block_id)
-      expect (available_rooms).must_equal @rooms
+      expect _(available_rooms).must_equal @rooms
     end
     
     it "raises ArgumentError if the given block doesn't exist" do
@@ -316,12 +316,12 @@ describe Hotel::HotelSystem do
     
     it "returns empty array if the given block doesn't have any available room" do
       available_rooms = @hotel_system.available_rooms_in_block(@block_id)
-      expect (available_rooms).must_equal @rooms
+      expect _(available_rooms).must_equal @rooms
       
       @rooms.each do |room|
         @hotel_system.reserve_room(room)
       end
-      expect (@hotel_system.available_rooms_in_block(@block_id)).must_be_empty
+      expect _(@hotel_system.available_rooms_in_block(@block_id)).must_be_empty
     end
   end
   
@@ -336,16 +336,16 @@ describe Hotel::HotelSystem do
     
     it "can reserve a room in a hotel block for the entire duration" do
       discounted_cost = @cost_per_night * (1 - @discount) * @duration
-      expect (@hotel_system.reservations).must_be_empty
+      expect _(@hotel_system.reservations).must_be_empty
       
       @rooms.each do |room|
         @hotel_system.reserve_room(room)
       end
       
-      expect (@hotel_system.reservations.length).must_equal @rooms.length
+      expect _(@hotel_system.reservations.length).must_equal @rooms.length
       @hotel_system.reservations.each do |reservation| 
-        expect (reservation.date_range).must_equal @date_range
-        expect (reservation.cost).must_equal discounted_cost
+        expect _(reservation.date_range).must_equal @date_range
+        expect _(reservation.cost).must_equal discounted_cost
       end
     end
     

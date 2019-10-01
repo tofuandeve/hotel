@@ -14,8 +14,8 @@ describe Hotel::Reservation do
   describe "Constructor" do
     it "can construct a reservation from date range" do
       reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate)
-      expect (reservation).must_be_instance_of Hotel::Reservation
-      expect (reservation.date_range).must_equal @date_range
+      expect _(reservation).must_be_instance_of Hotel::Reservation
+      expect _(reservation.date_range).must_equal @date_range
     end
   end
   
@@ -24,7 +24,7 @@ describe Hotel::Reservation do
       expected_cost = @duration * @rate
       
       reservation = Hotel::Reservation.new(date_range: @date_range, rate: @rate)
-      expect (reservation.cost).must_equal expected_cost
+      expect _(reservation.cost).must_equal expected_cost
     end
   end
 end
